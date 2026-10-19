@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Local Cafe Trend & Loyalty Analyzer - Catbalogan City</title>
+  <link rel="stylesheet" href="css/style.css" onerror="this.onerror=null;this.href='style.css';">
+</head>
+<body>
+
+  <!-- Top Header Banner -->
+  <header class="app-header">
+    <div class="header-content">
+      <div class="brand-title">
+        <svg class="icon-large" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+          <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+          <line x1="6" y1="1" x2="6" y2="4"></line>
+          <line x1="10" y1="1" x2="10" y2="4"></line>
+          <line x1="14" y1="1" x2="14" y2="4"></line>
+        </svg>
+        <div>
+          <h1>The Local Cafe Trend &amp; Loyalty Analyzer</h1>
+          <p class="subtitle">Catbalogan City Branch • Student Demo BI Dashboard</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- View Toggle Button (POS Dashboard vs Presentation Deck) -->
+        <button id="toggleViewBtn" class="btn-toggle-view" type="button">
+          <svg class="icon-small" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+            <line x1="8" y1="21" x2="16" y2="21"></line>
+            <line x1="12" y1="17" x2="12" y2="21"></line>
+          </svg>
+          <span id="toggleViewBtnText">Switch to Slide Deck View</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+
+  <!-- VIEW 1: POS DASHBOARD VIEW -->
+  <main id="dashboardView" class="dashboard-grid">
+
+    <!-- LEFT COLUMN: Data Ingestion & Ledger -->
+    <section class="left-column">
+      
+      <!-- Data Ingestion Form -->
+      <div class="card form-card">
+        <div class="card-header">
+          <svg class="icon-med" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="16"></line>
+            <line x1="8" y1="12" x2="16" y2="12"></line>
+          </svg>
+          <h2>Log New Transaction</h2>
+        </div>
+        
+        <form id="transactionForm">
+          <div class="form-group">
+            <label for="timeOfDay">Time of Day</label>
+            <select id="timeOfDay" required>
+              <option value="Morning">Morning (6 AM - 12 PM)</option>
+              <option value="Afternoon">Afternoon (12 PM - 6 PM)</option>
+              <option value="Evening">Evening (6 PM - 10 PM)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="itemCategory">Item Category</label>
+            <select id="itemCategory" required>
+              <option value="Coffee/Drinks">Coffee / Drinks</option>
+              <option value="Pastries">Pastries / Baked Goods</option>
+              <option value="Heavy Meals">Heavy Meals / Rice Bowls</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="paymentMethod">Payment Method</label>
+            <select id="paymentMethod" required>
+              <option value="GCash">GCash (Digital Wallet)</option>
+              <option value="Cash">Cash</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="billAmount">Bill Amount (PHP ₱)</label>
+            <input type="number" id="billAmount" min="1" step="0.01" placeholder="e.g. 180" required>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" id="logBtn" class="btn-primary">
+              <svg class="icon-small" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                <polyline points="7 3 7 8 15 8"></polyline>
+              </svg>
+              Log Transaction
+            </button>
+            <button type="button" id="addSampleBtn" class="btn-outline">
+              + Quick Sample
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Live Transaction Log Feed -->
+      <div class="card feed-card">
+        <div class="card-header space-between">
+          <div class="header-left">
+            <svg class="icon-med" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+            </svg>
+            <h2>Transaction Feed</h2>
+          </div>
+          <button id="resetDataBtn" class="btn-danger-link" type="button">Reset Sample Data</button>
+        </div>
+
+        <div class="feed-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Category</th>
+                <th>Method</th>
+                <th>Amount</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="transactionTableBody">
+              <!-- Dynamically populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- RIGHT COLUMN: BI Engine KPIs & Visualizations -->
+    <section class="right-column">
+
+      <!-- TOP RIGHT KPI CARDS -->
+      <div class="kpi-grid">
+        <!-- KPI 1: Revenue -->
+        <div class="kpi-card">
+          <div class="kpi-icon icon-revenue">
+            <svg class="icon-med" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="1" x2="12" y2="23"></line>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg>
+          </div>
+          <div class="kpi-content">
+            <span class="kpi-title">Total Revenue</span>
+            <span class="kpi-value" id="kpiRevenue">₱0.00</span>
+            <span class="kpi-subtext" id="kpiRevenueSub">Computed using .reduce()</span>
+          </div>
+        </div>
+
+        <!-- KPI 2: Top Payment Method -->
+        <div class="kpi-card">
+          <div class="kpi-icon icon-payment">
+            <svg class="icon-med" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+              <line x1="2" y1="10" x2="22" y2="10"></line>
+            </svg>
+          </div>
+          <div class="kpi-content">
+            <span class="kpi-title">Top Payment Method</span>
+            <span class="kpi-value" id="kpiPayment">--</span>
+            <span class="kpi-subtext" id="kpiPaymentSub">Cash vs GCash Analysis</span>
+          </div>
+        </div>
+
+        <!-- KPI 3: Total Transactions -->
+        <div class="kpi-card">
+          <div class="kpi-icon icon-count">
+            <svg class="icon-med" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+              <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+            </svg>
+          </div>
+          <div class="kpi-content">
+            <span class="kpi-title">Total Transactions</span>
+            <span class="kpi-value" id="kpiCount">0</span>
+            <span class="kpi-subtext">Length of Data Array</span>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- VISUALIZATION LAYER & FILTERS -->
+      <div class="card viz-card">
+        <div class="viz-header">
+          <div>
+            <h2>Category Sales &amp; Shift Trends</h2>
+            <p class="subtitle">Filtered Dynamic Visual Analytics</p>
+          </div>
+
+          <!-- Time-of-Day Filter Buttons -->
+          <div class="filter-group">
+            <button type="button" class="filter-btn active" data-filter="All">All Shifts</button>
+            <button type="button" class="filter-btn" data-filter="Morning">Morning</button>
+            <button type="button" class="filter-btn" data-filter="Afternoon">Afternoon</button>
+            <button type="button" class="filter-btn" data-filter="Evening">Evening</button>
+          </div>
+        </div>
+
+        <!-- HTML5 Canvas Bar Chart Container -->
+        <div class="canvas-wrapper">
+          <canvas id="categoryChart" width="600" height="220"></canvas>
+        </div>
+
+        <!-- Secondary Payment Breakdown & Insights -->
+        <div class="secondary-analytics-grid">
+          
+          <!-- Cash vs GCash Meter -->
+          <div class="sub-panel">
+            <h3>Payment Method Breakdown</h3>
+            <div class="progress-block">
+              <div class="progress-labels">
+                <span>GCash Digital</span>
+                <span id="gcashPercentText">0%</span>
+              </div>
+              <div class="progress-bar-bg">
+                <div id="gcashFill" class="progress-fill gcash-bg" style="width: 0%;"></div>
+              </div>
+            </div>
+
+            <div class="progress-block">
+              <div class="progress-labels">
+                <span>Cash Payment</span>
+                <span id="cashPercentText">0%</span>
+              </div>
+              <div class="progress-bar-bg">
+                <div id="cashFill" class="progress-fill cash-bg" style="width: 0%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dynamic Business Insight Box -->
+          <div class="sub-panel insight-box">
+            <div class="insight-title">
+              <svg class="icon-small" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>
+              </svg>
+              <span>Catbalogan Business Insight</span>
+            </div>
+            <p id="insightText">Log transaction data to generate automated operational recommendations.</p>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- VIEW 2: EMBEDDED SLIDE PRESENTATION DECK (HIDDEN BY DEFAULT) -->
+  <section id="slidesView" class="slides-wrapper hidden">
+    
+    <!-- Slide Controls Bar -->
+    <div class="slide-controls-bar">
+      <div class="slide-nav-group">
+        <button id="prevSlideBtn" class="btn-outline" type="button">
+          <svg class="icon-small" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          Previous
+        </button>
+
+        <span id="slideIndicator" class="slide-indicator">Slide 1 of 9</span>
+
+        <button id="nextSlideBtn" class="btn-primary" type="button">
+          Next
+          <svg class="icon-small" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+
+        <!-- Enlarge Presentation Toggle Button -->
+        <button id="enlargeSlideBtn" class="btn-outline" type="button" title="Toggle Fullscreen Slide View">
+          <svg class="icon-small" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+          </svg>
+          <span id="enlargeBtnText">Enlarge Slide</span>
+        </button>
+      </div>
+
+      <div class="slide-select-group">
+        <label for="slideSelect">Jump to Slide:</label>
+        <select id="slideSelect">
+          <option value="1">Slide 1: Title & Overview</option>
+          <option value="2">Slide 2: Background & Problem Statement</option>
+          <option value="3">Slide 3: Project Scope & Solution</option>
+          <option value="4">Slide 4: Data Ingestion & Live Feed</option>
+          <option value="5">Slide 5: BI Analytics Engine & KPIs</option>
+          <option value="6">Slide 6: HTML5 Canvas Visualizations</option>
+          <option value="7">Slide 7: Decision Support & Insights</option>
+          <option value="8">Slide 8: Defense Guide & Conclusion</option>
+          <option value="9">Slide 9: Presentation Wrap-Up & Q&A</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Slide Canvas Card -->
+    <div class="slide-card">
+
+      <!-- SLIDE 1 -->
+      <div class="slide-content active" data-slide="1">
+        <div class="slide-header">
+          <h2>The Local Cafe Trend &amp; Loyalty Analyzer</h2>
+          <p class="slide-sub">Catbalogan City Branch • Classroom Defense Presentation Deck</p>
+        </div>
+        <div class="slide-body">
+          <div class="slide-highlight-box">
+            <h3>Project Overview</h3>
+            <p>A lightweight, single-screen Business Intelligence prototype designed for local food and beverage cafes in Catbalogan City, Samar.</p>
+          </div>
+          <ul class="slide-list">
+            <li><strong>Core Objective:</strong> Replace slow paper receipts and manual calculations with real-time sales analytics.</li>
+            <li><strong>Technology Stack:</strong> Pure Vanilla JavaScript, HTML5 Canvas API, and CSS3.</li>
+            <li><strong>Key Feature:</strong> Operates entirely in browser memory using functional array methods (<code>.push</code>, <code>.reduce</code>, <code>.filter</code>).</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- SLIDE 2 -->
+      <div class="slide-content" data-slide="2">
+        <div class="slide-header">
+          <h2>Background &amp; Problem Statement</h2>
+          <p class="slide-sub">The Operational Challenges Facing Catbalogan Cafe Operators</p>
+        </div>
+        <div class="slide-body">
+          <div class="slide-split-grid">
+            <div class="slide-box">
+              <h3>Traditional Cafe Management</h3>
+              <ul>
+                <li>Manual sales tracking via paper receipts or basic calculators.</li>
+                <li>No visibility into shift-by-shift sales trends or customer activity.</li>
+                <li>Difficulty determining stock needs between drinks, pastries, and meals.</li>
+              </ul>
+            </div>
+            <div class="slide-box highlight">
+              <h3>The BI Information Gap</h3>
+              <ul>
+                <li>Which operational shift is our peak revenue driver?</li>
+                <li>What menu categories sell best in the morning vs. evening?</li>
+                <li>Are local customers transitioning from Cash to GCash digital payments?</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 3 -->
+      <div class="slide-content" data-slide="3">
+        <div class="slide-header">
+          <h2>Project Scope &amp; Technical Solution</h2>
+          <p class="slide-sub">Boundaries and Architecture of the System</p>
+        </div>
+        <div class="slide-body">
+          <div class="slide-split-grid">
+            <div class="slide-box">
+              <h3>Project Scope Boundaries</h3>
+              <ul>
+                <li><strong>3 Shifts:</strong> Morning (6AM-12PM), Afternoon (12PM-6PM), Evening (6PM-10PM).</li>
+                <li><strong>3 Categories:</strong> Coffee/Drinks, Pastries, Heavy Meals.</li>
+                <li><strong>2 Channels:</strong> Cash and GCash.</li>
+                <li><strong>Architecture:</strong> Single-page layout running 100% client-side without backend databases.</li>
+              </ul>
+            </div>
+            <div class="slide-box">
+              <h3>Proposed BI Solution</h3>
+              <ul>
+                <li>Integrated point-of-sale cashier entry logger.</li>
+                <li>Instant dynamic Key Performance Indicators (KPIs).</li>
+                <li>Filterable HTML5 Canvas horizontal category bar charts.</li>
+                <li>Automated operational recommendation insight generator.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 4 -->
+      <div class="slide-content" data-slide="4">
+        <div class="slide-header">
+          <h2>Data Ingestion &amp; Live Feed</h2>
+          <p class="slide-sub">Capturing POS Input and Processing Memory Records</p>
+        </div>
+        <div class="slide-body">
+          <p>The cashier enters transaction details through our Point-of-Sale form. When logged, JavaScript handles memory storage and UI updates.</p>
+          
+          <div class="code-explain">
+            <h3>1. Append Entry with <code>.push()</code></h3>
+            <pre>transactions.push({ id: Date.now(), timeOfDay, category, paymentMethod, billAmount });</pre>
+          </div>
+
+          <div class="code-explain">
+            <h3>2. Dynamic Table Ledger Rendering</h3>
+            <p>Calls <code>renderTable()</code> to clear and rebuild rows via Vanilla JS DOM manipulation without page reloads.</p>
+          </div>
+
+          <div class="code-explain">
+            <h3>3. Clean Deletion with <code>.filter()</code></h3>
+            <pre>transactions = transactions.filter(item => item.id !== selectedId);</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 5 -->
+      <div class="slide-content" data-slide="5">
+        <div class="slide-header">
+          <h2>BI Analytics Engine &amp; KPIs</h2>
+          <p class="slide-sub">Calculating Core Performance Metrics in Real Time</p>
+        </div>
+        <div class="slide-body">
+          <div class="slide-split-grid">
+            <div class="slide-box">
+              <h3>1. Total Revenue (₱)</h3>
+              <p>Uses <code>.reduce()</code> to sum all transaction amounts dynamically:</p>
+              <pre>const total = data.reduce((acc, curr) => acc + curr.billAmount, 0);</pre>
+            </div>
+            <div class="slide-box">
+              <h3>2. Top Payment Method</h3>
+              <p>Compares Cash vs GCash transaction counts using frequency counter logic.</p>
+            </div>
+          </div>
+          <div class="slide-box" style="margin-top:12px;">
+            <h3>3. Total Order Volume</h3>
+            <p>Reads array size instantly using <code>data.length</code>.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 6 -->
+      <div class="slide-content" data-slide="6">
+        <div class="slide-header">
+          <h2>HTML5 Canvas Visualizations</h2>
+          <p class="slide-sub">Framework-Free Bar Graphs Driven by Shift Filters</p>
+        </div>
+        <div class="slide-body">
+          <ul class="slide-list">
+            <li><strong>Zero External Chart Libraries:</strong> Uses native <code>HTML5 Canvas 2D API</code> for maximum speed and zero dependencies.</li>
+            <li><strong>Shift Filtering via <code>.filter()</code>:</strong> Isolates morning, afternoon, or evening records:</li>
+          </ul>
+          <pre>const filteredData = activeFilter === "All" ? transactions : transactions.filter(t => t.timeOfDay === activeFilter);</pre>
+          <ul class="slide-list" style="margin-top:10px;">
+            <li><strong>Dynamic Proportional Scaling:</strong> Aggregates totals, finds max revenue using <code>Math.max()</code>, and draws bar rectangles using <code>ctx.fillRect()</code>.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- SLIDE 7 -->
+      <div class="slide-content" data-slide="7">
+        <div class="slide-header">
+          <h2>Decision Support &amp; Business Insights</h2>
+          <p class="slide-sub">Automated Recommendations for Catbalogan Cafe Management</p>
+        </div>
+        <div class="slide-body">
+          <div class="slide-split-grid">
+            <div class="slide-box">
+              <h3>Payment Method Breakdown</h3>
+              <p>Calculates exact percentage split and updates progress bar CSS widths dynamically:</p>
+              <pre>gcashFill.style.width = `${gcashPct}%`;</pre>
+            </div>
+            <div class="slide-box highlight">
+              <h3>Catbalogan Insight Generator</h3>
+              <p>Evaluates shift trends to output tailored operational advice.</p>
+              <p><em>Example: "During Morning shift, GCash usage is 67%. Display more QR standees at checkout to speed up order queues."</em></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 8 -->
+      <div class="slide-content" data-slide="8">
+        <div class="slide-header">
+          <h2>Defense Preparedness &amp; Conclusion</h2>
+          <p class="slide-sub">Key Defense Points and Summary</p>
+        </div>
+        <div class="slide-body">
+          <ul class="slide-list">
+            <li><strong>Clean Architecture:</strong> Proves that functional Vanilla JS methods (<code>.push</code>, <code>.reduce</code>, <code>.filter</code>) can build complete Business Intelligence tools.</li>
+            <li><strong>Real-Time Analytics Engine:</strong> Computes sales metrics and trends on-the-fly directly in browser memory without backend database lag.</li>
+            <li><strong>Practical Local Value:</strong> Provides small cafe operators in Catbalogan City with immediate visual analytics without requiring expensive software subscriptions.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- SLIDE 9 -->
+      <div class="slide-content" data-slide="9">
+        <div class="slide-header">
+          <h2>Presentation Wrap-Up &amp; Q&amp;A</h2>
+          <p class="slide-sub">The Local Cafe Trend &amp; Loyalty Analyzer • Catbalogan City Branch</p>
+        </div>
+        <div class="slide-body text-center" style="text-align: center; padding: 20px 0;">
+          <h3 style="font-size: 1.4rem; color: var(--accent-amber); margin-bottom: 12px;">Thank You for Your Time!</h3>
+          <p style="margin-bottom: 20px; color: var(--text-muted);">We are now ready to take any questions from our teacher and classmates.</p>
+          <button id="returnToPosBtn" class="btn-primary" style="display: inline-flex; width: auto; padding: 12px 24px;" type="button">
+            Switch to Live POS Dashboard Demo
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- Automatic Path Fallback Script Tag -->
+  <script src="js/script.js" onerror="this.onerror=null;this.src='script.js';"></script>
+</body>
+</html>
