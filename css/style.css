@@ -318,26 +318,9 @@ canvas { width: 100%; max-width: 600px; height: auto; }
 .slides-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  max-width: 900px;
+  gap: 20px;
+  max-width: 1000px;
   margin: 0 auto;
-  transition: all 0.3s ease-in-out;
-}
-
-/* Enlarged Fullscreen Mode for Slide Deck */
-.slides-wrapper.fullscreen-mode {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  max-width: 100vw;
-  z-index: 1000;
-  background-color: var(--bg-main);
-  padding: 20px;
-  margin: 0;
-  overflow-y: auto;
-  border-radius: 0;
 }
 
 .slide-controls-bar {
@@ -353,7 +336,7 @@ canvas { width: 100%; max-width: 600px; height: auto; }
   box-shadow: var(--shadow-warm);
 }
 
-.slide-nav-group { display: flex; align-items: center; gap: 10px; }
+.slide-nav-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .slide-indicator { font-size: 0.88rem; font-weight: 700; color: var(--text-dark); padding: 0 6px; }
 
 .slide-select-group { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-muted); }
@@ -366,23 +349,20 @@ canvas { width: 100%; max-width: 600px; height: auto; }
   font-size: 0.85rem;
 }
 
-/* Frame Consistency across all slides */
+/* ---- Slide frame (all sizes below are in em, so the whole slide scales
+        from one font-size on .slide-card) ---- */
 .slide-card {
+  font-size: 1rem;
   background-color: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius);
-  padding: 32px;
-  height: 480px;
-  min-height: 480px;
+  padding: 2.6em 3.2em;
+  height: 540px;
+  min-height: 540px;
   box-shadow: var(--shadow-warm);
   display: flex;
   flex-direction: column;
   overflow: hidden;
-}
-
-.slides-wrapper.fullscreen-mode .slide-card {
-  height: calc(100vh - 110px);
-  min-height: calc(100vh - 110px);
 }
 
 .slide-content {
@@ -401,18 +381,27 @@ canvas { width: 100%; max-width: 600px; height: auto; }
   to { opacity: 1; transform: translateY(0); }
 }
 
-.slide-header h2 { font-size: 1.5rem; color: var(--text-dark); margin-bottom: 4px; }
-.slide-sub { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 18px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; }
+.slide-header { flex-shrink: 0; margin-bottom: 1.4em; }
+.slide-header h2 { font-size: 1.75em; line-height: 1.2; color: var(--text-dark); margin-bottom: 0.3em; }
+.slide-sub {
+  font-size: 0.92em;
+  color: var(--text-muted);
+  margin-bottom: 0;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.9em;
+}
 
 .slide-body {
-  font-size: 0.95rem;
-  line-height: 1.6;
+  font-size: 1em;
+  line-height: 1.65;
   color: var(--text-dark);
   flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   overflow-y: auto;
+  padding-right: 0.3em;
 }
 
 /* Bold code in presentation */
@@ -425,30 +414,134 @@ canvas { width: 100%; max-width: 600px; height: auto; }
 .slide-body pre {
   background-color: #2c1b10;
   color: #f7eee3;
-  padding: 10px 14px;
+  padding: 0.8em 1.1em;
   border-radius: 6px;
-  font-size: 0.85rem;
-  margin: 10px 0;
+  font-size: 0.9em;
+  margin: 0.8em 0;
   overflow-x: auto;
 }
 
 .slide-highlight-box {
   background-color: var(--bg-card-alt);
   border-left: 4px solid var(--accent-amber);
-  padding: 16px;
+  padding: 1.1em 1.3em;
   border-radius: 6px;
-  margin-bottom: 16px;
+  margin-bottom: 1.3em;
 }
 
-.slide-highlight-box h3 { font-size: 1.05rem; margin-bottom: 6px; color: var(--text-dark); }
-.slide-list { margin-left: 20px; margin-bottom: 16px; }
-.slide-list li { margin-bottom: 8px; }
+.slide-highlight-box h3 { font-size: 1.1em; margin-bottom: 0.4em; color: var(--text-dark); }
+.slide-list { margin-left: 1.4em; margin-bottom: 1em; }
+.slide-list li { margin-bottom: 0.6em; padding-left: 0.2em; }
 
-.slide-split-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
-@media (max-width: 600px) { .slide-split-grid { grid-template-columns: 1fr; } }
+.slide-split-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2em; margin-top: 0.3em; }
+@media (max-width: 700px) {
+  .slide-split-grid { grid-template-columns: 1fr; }
+  .slide-card { padding: 1.4em 1.2em; height: auto; min-height: 480px; }
+}
 
-.slide-box { background-color: var(--bg-card-alt); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; }
+.slide-box { background-color: var(--bg-card-alt); border: 1px solid var(--border-color); border-radius: 8px; padding: 1.2em 1.4em; }
 .slide-box.highlight { border-color: var(--accent-amber); }
-.slide-box h3 { font-size: 0.98rem; margin-bottom: 8px; color: var(--accent-amber); }
-.slide-box ul { margin-left: 18px; font-size: 0.88rem; }
-.slide-box li { margin-bottom: 6px; }
+.slide-box h3 { font-size: 1.02em; margin-bottom: 0.6em; color: var(--accent-amber); }
+.slide-box ul { margin-left: 1.3em; font-size: 0.92em; }
+.slide-box li { margin-bottom: 0.5em; }
+
+/* Elements only used in presentation mode */
+.slide-progress,
+.slide-counter-fs { display: none; }
+
+/* ==========================================================================
+   PRESENT MODE (true fullscreen, like PowerPoint's "Present")
+   The slide fills the entire screen edge to edge; controls float at the
+   bottom and fade away when the mouse is idle.
+   ========================================================================== */
+body.presenting { overflow: hidden; }
+
+.slides-wrapper.fullscreen-mode {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  gap: 0;
+  display: block;
+  z-index: 1000;
+  background-color: var(--bg-card);
+  overflow: hidden;
+}
+
+.slides-wrapper.fullscreen-mode .slide-card {
+  /* scales with the screen: limited by whichever of width/height is tighter */
+  font-size: clamp(15px, min(1.35vw, 2.5vh), 30px);
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 6vh 8vw 12vh;
+  background-image: radial-gradient(circle at 50% 0%, #fbf4ea 0%, var(--bg-card) 70%);
+}
+
+.slides-wrapper.fullscreen-mode .slide-header { margin-bottom: 1.5em; }
+.slides-wrapper.fullscreen-mode .slide-header h2 { font-size: 2em; }
+
+/* Floating control bar */
+.slides-wrapper.fullscreen-mode .slide-controls-bar {
+  position: fixed;
+  left: 50%;
+  bottom: 22px;
+  transform: translateX(-50%);
+  width: min(960px, calc(100vw - 40px));
+  z-index: 1010;
+  background-color: rgba(247, 238, 227, 0.96);
+  backdrop-filter: blur(6px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.slides-wrapper.fullscreen-mode.controls-hidden .slide-controls-bar {
+  opacity: 0;
+  transform: translate(-50%, 16px);
+  pointer-events: none;
+}
+
+.slides-wrapper.fullscreen-mode.controls-hidden { cursor: none; }
+
+/* Thin progress bar along the bottom edge + slide counter */
+.slides-wrapper.fullscreen-mode .slide-progress {
+  display: block;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 5px;
+  background-color: rgba(44, 27, 16, 0.12);
+  z-index: 1005;
+}
+.slide-progress span {
+  display: block;
+  height: 100%;
+  width: 0;
+  background-color: var(--accent-amber);
+  transition: width 0.3s ease;
+}
+
+.slides-wrapper.fullscreen-mode .slide-counter-fs {
+  display: block;
+  position: fixed;
+  right: 2.2vw;
+  bottom: 18px;
+  z-index: 1005;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  transition: opacity 0.35s ease;
+}
+.slides-wrapper.fullscreen-mode:not(.controls-hidden) .slide-counter-fs { opacity: 0; }
+
+/* Spacing for the numbered code walkthrough blocks (slide 4) */
+.code-explain { margin-top: 1em; }
+.code-explain h3 { font-size: 1.1em; margin-bottom: 0.3em; }
+.slide-body > p { margin-bottom: 0.4em; }

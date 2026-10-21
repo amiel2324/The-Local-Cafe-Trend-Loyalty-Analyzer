@@ -287,11 +287,11 @@
         </button>
 
         <!-- Enlarge Presentation Toggle Button -->
-        <button id="enlargeSlideBtn" class="btn-outline" type="button" title="Toggle Fullscreen Slide View">
+        <button id="enlargeSlideBtn" class="btn-outline" type="button" title="Present in fullscreen (F)">
           <svg class="icon-small" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
           </svg>
-          <span id="enlargeBtnText">Enlarge Slide</span>
+          <span id="enlargeBtnText">Present Fullscreen</span>
         </button>
       </div>
 
@@ -435,7 +435,7 @@
               <p>Compares Cash vs GCash transaction counts using frequency counter logic.</p>
             </div>
           </div>
-          <div class="slide-box" style="margin-top:12px;">
+          <div class="slide-box" style="margin-top:1em;">
             <h3>3. Total Order Volume</h3>
             <p>Reads array size instantly using <code>data.length</code>.</p>
           </div>
@@ -454,7 +454,7 @@
             <li><strong>Shift Filtering via <code>.filter()</code>:</strong> Isolates morning, afternoon, or evening records:</li>
           </ul>
           <pre>const filteredData = activeFilter === "All" ? transactions : transactions.filter(t => t.timeOfDay === activeFilter);</pre>
-          <ul class="slide-list" style="margin-top:10px;">
+          <ul class="slide-list" style="margin-top:0.8em;">
             <li><strong>Dynamic Proportional Scaling:</strong> Aggregates totals, finds max revenue using <code>Math.max()</code>, and draws bar rectangles using <code>ctx.fillRect()</code>.</li>
           </ul>
         </div>
@@ -503,9 +503,9 @@
           <h2>Presentation Wrap-Up &amp; Q&amp;A</h2>
           <p class="slide-sub">The Local Cafe Trend &amp; Loyalty Analyzer • Catbalogan City Branch</p>
         </div>
-        <div class="slide-body text-center" style="text-align: center; padding: 20px 0;">
-          <h3 style="font-size: 1.4rem; color: var(--accent-amber); margin-bottom: 12px;">Thank You for Your Time!</h3>
-          <p style="margin-bottom: 20px; color: var(--text-muted);">We are now ready to take any questions from our teacher and classmates.</p>
+        <div class="slide-body text-center" style="text-align: center; padding: 1em 0;">
+          <h3 style="font-size: 1.5em; color: var(--accent-amber); margin-bottom: 0.5em;">Thank You for Your Time!</h3>
+          <p style="margin-bottom: 1.4em; color: var(--text-muted);">We are now ready to take any questions from our teacher and classmates.</p>
           <button id="returnToPosBtn" class="btn-primary" style="display: inline-flex; width: auto; padding: 12px 24px;" type="button">
             Switch to Live POS Dashboard Demo
           </button>
@@ -513,6 +513,10 @@
       </div>
 
     </div>
+
+    <!-- Present-mode extras (only visible in fullscreen) -->
+    <div class="slide-progress"><span id="slideProgressBar"></span></div>
+    <div class="slide-counter-fs" id="slideCounterFs">1 / 9</div>
 
   </section>
 

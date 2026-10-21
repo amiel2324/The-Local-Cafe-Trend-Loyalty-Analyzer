@@ -41,6 +41,10 @@ window.toggleMainView = function(forceTarget) {
     currentView = (currentView === "dashboard") ? "slides" : "dashboard";
   }
 
+  if (currentView !== "slides" && typeof window.exitPresentation === "function") {
+    window.exitPresentation();
+  }
+
   if (currentView === "slides") {
     dashboardView.classList.add("hidden");
     slidesView.classList.remove("hidden");
@@ -76,6 +80,79 @@ window.goToSlide = function(slideNum) {
 
   if (prevSlideBtn) prevSlideBtn.disabled = (currentSlide === 1);
   if (nextSlideBtn) nextSlideBtn.disabled = (currentSlide === totalSlides);
+
+  const progressBar = document.getElementById("slideProgressBar");
+  const counterFs   = document.getElementById("slideCounterFs");
+  if (progressBar) progressBar.style.width = `${(currentSlide / totalSlides) * 100}%`;
+  if (counterFs) counterFs.textContent = `${currentSlide} / ${totalSlides}`;
+};
+
+// ---- Presentation (fullscreen) mode ----
+let controlsTimer = null;
+
+function isNativeFullscreen() {
+  return !!(document.fullscreenElement || document.webkitFullscreenElement);
+}
+
+function showPresentControls() {
+  const slidesView = document.getElementById("slidesView");
+  if (!slidesView) return;
+  slidesView.classList.remove("controls-hidden");
+  clearTimeout(controlsTimer);
+  controlsTimer = setTimeout(() => {
+    const bar = slidesView.querySelector(".slide-controls-bar");
+    const busy = bar && (bar.matches(":hover") || bar.contains(document.activeElement) && document.activeElement.tagName === "SELECT");
+    if (slidesView.classList.contains("fullscreen-mode") && !busy) {
+      slidesView.classList.add("controls-hidden");
+    }
+  }, 2500);
+}
+
+function setPresentUI(on) {
+  const slidesView = document.getElementById("slidesView");
+  const label = document.getElementById("enlargeBtnText");
+  if (!slidesView) return;
+  slidesView.classList.toggle("fullscreen-mode", on);
+  document.body.classList.toggle("presenting", on);
+  if (label) label.textContent = on ? "Exit Fullscreen" : "Present Fullscreen";
+  if (on) {
+    showPresentControls();
+  } else {
+    clearTimeout(controlsTimer);
+    slidesView.classList.remove("controls-hidden");
+  }
+}
+
+window.enterPresentation = function() {
+  const slidesView = document.getElementById("slidesView");
+  if (!slidesView) return;
+  setPresentUI(true);
+  const req = slidesView.requestFullscreen || slidesView.webkitRequestFullscreen;
+  if (req) {
+    try {
+      const p = req.call(slidesView);
+      if (p && p.catch) p.catch(() => {}); // CSS full-viewport mode stays as fallback
+    } catch (err) { /* fallback already active */ }
+  }
+};
+
+window.exitPresentation = function() {
+  const slidesView = document.getElementById("slidesView");
+  if (!slidesView || !slidesView.classList.contains("fullscreen-mode")) return;
+  setPresentUI(false);
+  if (isNativeFullscreen()) {
+    const exit = document.exitFullscreen || document.webkitExitFullscreen;
+    if (exit) { try { const p = exit.call(document); if (p && p.catch) p.catch(() => {}); } catch (err) {} }
+  }
+};
+
+window.togglePresentation = function() {
+  const slidesView = document.getElementById("slidesView");
+  if (slidesView && slidesView.classList.contains("fullscreen-mode")) {
+    window.exitPresentation();
+  } else {
+    window.enterPresentation();
+  }
 };
 
 // Global Dashboard Update Pipeline
@@ -300,24 +377,56 @@ function initApp() {
   if (slideSelect) slideSelect.addEventListener("change", (e) => window.goToSlide(parseInt(e.target.value, 10)));
 
   if (enlargeSlideBtn && slidesView) {
-    enlargeSlideBtn.addEventListener("click", () => {
-      slidesView.classList.toggle("fullscreen-mode");
-      const isFullscreen = slidesView.classList.contains("fullscreen-mode");
-      if (enlargeBtnText) {
-        enlargeBtnText.textContent = isFullscreen ? "Exit Fullscreen" : "Enlarge Slide";
-      }
-    });
+    enlargeSlideBtn.addEventListener("click", () => window.togglePresentation());
   }
+
+  // Keep our UI in sync when the browser leaves fullscreen itself (e.g. Esc key)
+  const onFsChange = () => {
+    if (!isNativeFullscreen() && slidesView && slidesView.classList.contains("fullscreen-mode")) {
+      setPresentUI(false);
+    }
+  };
+  document.addEventListener("fullscreenchange", onFsChange);
+  document.addEventListener("webkitfullscreenchange", onFsChange);
+
+  // Reveal the floating controls whenever the mouse/finger moves in present mode
+  if (slidesView) {
+    ["mousemove", "mousedown", "touchstart"].forEach(evt =>
+      slidesView.addEventListener(evt, () => {
+        if (slidesView.classList.contains("fullscreen-mode")) showPresentControls();
+      }, { passive: true })
+    );
+  }
+
+  // Dropdown shouldn't keep keyboard focus (it would swallow the arrow keys)
+  if (slideSelect) slideSelect.addEventListener("change", () => slideSelect.blur());
 
   // Navigation Keybindings
   document.addEventListener("keydown", (e) => {
-    if (currentView === "slides") {
-      if (e.key === "ArrowLeft") window.goToSlide(currentSlide - 1);
-      if (e.key === "ArrowRight") window.goToSlide(currentSlide + 1);
-      if (e.key === "Escape" && slidesView && slidesView.classList.contains("fullscreen-mode")) {
-        slidesView.classList.remove("fullscreen-mode");
-        if (enlargeBtnText) enlargeBtnText.textContent = "Enlarge Slide";
-      }
+    if (currentView !== "slides") return;
+    const tag = (e.target && e.target.tagName) || "";
+    if (tag === "INPUT" || tag === "TEXTAREA") return;
+    const presenting = slidesView && slidesView.classList.contains("fullscreen-mode");
+    if (presenting) showPresentControls();
+
+    switch (e.key) {
+      case "ArrowLeft":
+      case "PageUp":
+        e.preventDefault(); window.goToSlide(currentSlide - 1); break;
+      case "ArrowRight":
+      case "PageDown":
+        e.preventDefault(); window.goToSlide(currentSlide + 1); break;
+      case " ":
+        if (tag === "BUTTON" || tag === "SELECT") return;
+        e.preventDefault(); window.goToSlide(currentSlide + 1); break;
+      case "Home": e.preventDefault(); window.goToSlide(1); break;
+      case "End":  e.preventDefault(); window.goToSlide(totalSlides); break;
+      case "f":
+      case "F":
+        if (tag === "SELECT") return;
+        window.togglePresentation(); break;
+      case "Escape":
+        if (presenting) window.exitPresentation(); break;
     }
   });
 
